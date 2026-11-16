@@ -1,0 +1,40 @@
+{
+  "name": "quality-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "End-to-end quality platform: API, E2E, accessibility and performance testing with Playwright, TypeScript and k6.",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=e2e-chromium --project=e2e-firefox",
+    "test:a11y": "playwright test --project=a11y",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:perf": "k6 run performance/booking-load.ts",
+    "test:perf:smoke": "k6 run --env PROFILE=smoke performance/booking-load.ts",
+    "report": "playwright show-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.65.1",
+    "@types/k6": "^2.3.1",
+    "@types/node": "^26.6.6",
+    "dotenv": "^18.0.10",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.2",
+    "prettier": "^3.10.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "zod": "^4.6.7"
+  }
+}
