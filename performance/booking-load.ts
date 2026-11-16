@@ -6,8 +6,10 @@
  *   k6 run --env PROFILE=smoke performance/booking-load.ts
  *   k6 run --env PROFILE=stress performance/booking-load.ts
  *
- * Atenção: o alvo padrão é uma API pública compartilhada.
- * Mantenha as cargas baixas; para stress real, rode contra uma instância local.
+ * Atenção: o alvo padrão é uma API pública compartilhada, então só o perfil smoke deve rodar contra ela.
+ * Load e stress rodam contra a instância local (docker-compose.yml):
+ *   npm run test:perf:local
+ *   npm run test:stress:local
  */
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';

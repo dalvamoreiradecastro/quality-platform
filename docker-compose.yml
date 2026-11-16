@@ -1,0 +1,42 @@
+# Ambiente de testes local e isolado.
+#
+#   docker compose up -d --wait restful-booker      -> sobe a API em http://localhost:3001
+#   docker compose --profile perf run --rm k6 ...   -> roda o k6 contra a API local
+#   docker compose down                             -> derruba tudo
+#
+# O mesmo arquivo é usado localmente e no CI: o ambiente que roda na máquina
+# de quem desenvolve é exatamente o ambiente do pipeline.
+
+name: quality-platform
+
+services:
+  restful-booker:
+    image: mwinteringham/restfulbooker:latest
+    ports:
+      - '3001:3001'
+    healthcheck:
+      # A imagem não tem curl/wget; usamos o próprio Node para checar o /ping
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://localhost:3001/ping', r => process.exit(r.statusCode === 201 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  k6:
+    image: grafana/k6:2.3.0
+    profiles: [perf] # só sobe quando chamado explicitamente
+    depends_on:
+      restful-booker:
+        condition: service_healthy
+    environment:
+      API_BASE_URL: http://restful-booker:3001
+      K6_WEB_DASHBOARD: 'true'
+      K6_WEB_DASHBOARD_EXPORT: /reports/k6-report.html
+    volumes:
+      - ./performance:/scripts:ro
+      - ./performance/reports:/reports
+    working_dir: /scripts
