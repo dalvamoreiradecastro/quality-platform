@@ -71,16 +71,10 @@ jobs:
           retention-days: 7
 
   report:
-    name: Merge & publish report
+    name: Merge report
     needs: [api, ui]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -101,8 +95,22 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           path: playwright-report
+
+  # Job separado: o ambiente "github-pages" só aceita deploy a partir da main.
+  # Em PRs este job é pulado, e o relatório fica disponível como artefato "html-report".
+  deploy-report:
+    name: Publish report to GitHub Pages
+    needs: report
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.report.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
       - id: deploy
-        if: github.ref == 'refs/heads/main'
         uses: actions/deploy-pages@v4
 
   api-public:
