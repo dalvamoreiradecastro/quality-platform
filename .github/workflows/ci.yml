@@ -25,15 +25,22 @@ jobs:
       - run: npm run typecheck
 
   api:
-    name: API tests
+    name: API tests (local environment)
     needs: static-analysis
     runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: http://localhost:3001
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      - name: Start local environment
+        run: docker compose up -d --wait restful-booker
       - run: npx playwright test --project=api
+      - name: Service logs on failure
+        if: failure()
+        run: docker compose logs restful-booker
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -98,11 +105,36 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: actions/deploy-pages@v4
 
-  performance-smoke:
-    name: Performance smoke (k6)
+  api-public:
+    name: API tests (public environment)
+    # Ambiente compartilhado e fora do nosso controle: não bloqueia PR,
+    # roda na regressão agendada para detectar divergências entre ambientes.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: static-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright test --project=api --reporter=github,list
+
+  performance:
+    name: Performance load test (k6, local environment)
     needs: api
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: grafana/setup-k6-action@v1
-      - run: k6 run --env PROFILE=smoke performance/booking-load.ts
+      - name: Prepare report folder (k6 container runs as non-root)
+        run: mkdir -p performance/reports && chmod 777 performance/reports
+      - name: Run k6 load profile
+        run: docker compose --profile perf run --rm k6 run -e PROFILE=load booking-load.ts
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: k6-report
+          path: performance/reports
+          retention-days: 14
+      - name: Tear down
+        if: always()
+        run: docker compose down

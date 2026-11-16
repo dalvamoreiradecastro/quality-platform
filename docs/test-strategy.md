@@ -32,7 +32,7 @@ Dar confiança para liberar mudanças nos dois sistemas sob teste, com feedback 
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | Usuários `problem_user` / `glitch_user` em todos os fluxos | São bugs propositais da aplicação. Cobertos por exploração, não por regressão                    |
 | Layout pixel a pixel                                       | Custo de manutenção alto sem ganho de confiança equivalente. Avaliar regressão visual no roadmap |
-| Stress test contra APIs públicas                           | Não é ético sobrecarregar um serviço compartilhado. Planejado para o ambiente local              |
+| Load/stress test contra APIs públicas                      | Não é ético sobrecarregar um serviço compartilhado. Carga roda só no ambiente local (Docker)     |
 
 ## 5. Dados de teste
 
