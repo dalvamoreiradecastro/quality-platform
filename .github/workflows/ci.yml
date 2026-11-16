@@ -70,9 +70,37 @@ jobs:
           path: blob-report
           retention-days: 7
 
+  contract:
+    name: Contract tests (Pact, local environment)
+    needs: static-analysis
+    runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: http://localhost:3001
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Start local environment
+        run: docker compose up -d --wait restful-booker
+      # Roda o consumidor (gera o contrato) e depois verifica o provedor contra ele
+      - run: npx playwright test --project=contract-provider
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: pact-contracts
+          path: pacts
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-contract
+          path: blob-report
+          retention-days: 7
+
   report:
     name: Merge report
-    needs: [api, ui]
+    needs: [api, ui, contract]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:

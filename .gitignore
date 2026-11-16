@@ -8,3 +8,4 @@ all-blob-reports/
 playwright/.cache/
 *.log
 performance/reports/
+pacts/

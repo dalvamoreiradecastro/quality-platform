@@ -55,6 +55,18 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'], baseURL: env.UI_BASE_URL },
     },
 
+    // ---------- Contract testing (Pact) ----------
+    {
+      name: 'contract-consumer',
+      testDir: './tests/contract/consumer',
+      fullyParallel: false, // todas as interações escrevem no mesmo arquivo de contrato
+    },
+    {
+      name: 'contract-provider',
+      testDir: './tests/contract/provider',
+      dependencies: ['contract-consumer'],
+    },
+
     // ---------- Acessibilidade ----------
     {
       name: 'a11y',
