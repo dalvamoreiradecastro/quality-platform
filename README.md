@@ -1,6 +1,6 @@
 # Quality Platform
 
-[![CI](https://github.com/<seu-usuario>/quality-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/<seu-usuario>/quality-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/dalvamoreiradecastro/quality-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/dalvamoreiradecastro/quality-platform/actions/workflows/ci.yml)
 ![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![k6](https://img.shields.io/badge/k6-7D64FF?logo=k6&logoColor=white)
@@ -9,7 +9,7 @@ Uma plataforma de qualidade de ponta a ponta: testes de **API**, **E2E**, **aces
 
 O objetivo não é só mostrar automação. É mostrar **como decido o que testar, em que camada e por quê**. Essas decisões estão em [docs/test-strategy.md](docs/test-strategy.md).
 
-📊 **Relatório da última execução:** `https://<seu-usuario>.github.io/quality-platform/`
+📊 **Relatório da última execução:** `https://dalvamoreiradecastro.github.io/quality-platform/`
 
 ---
 
