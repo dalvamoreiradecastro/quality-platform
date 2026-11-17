@@ -18,11 +18,15 @@ Dar confiança para liberar mudanças nos dois sistemas sob teste, com feedback 
 ## 3. Distribuição por camada
 
 ```
-        ▲  E2E (poucos, fluxos críticos de negócio)
-       ▲▲▲ API (maior volume: regras, contratos, casos negativos)
+         ▲   E2E (poucos, fluxos críticos de negócio)
+        ▲▲▲  Contrato (integração consumidor ↔ provedor, sem subir tudo junto)
+       ▲▲▲▲▲ API (maior volume: regras, schemas, casos negativos)
 ```
 
 - **API** concentra a maior parte da cobertura: é rápida, estável e testa as regras de negócio diretamente.
+- **Contrato (Pact)** garante a integração entre consumidor e provedor sem precisar de um ambiente com os dois sistemas rodando. Ele substitui boa parte dos testes de integração lentos e frágeis.
+  - A validação de schema (Zod) diz "a resposta tem este formato".
+  - O Pact diz "este consumidor depende exatamente destes campos". É isso que permite saber se uma mudança no provedor quebra alguém.
 - **E2E** cobre só jornadas de ponta a ponta que o usuário realmente faz e que nenhuma outra camada valida (integração da UI).
 - **Variações de dados** (ex.: diferentes credenciais inválidas) são parametrizadas em vez de duplicadas.
 
